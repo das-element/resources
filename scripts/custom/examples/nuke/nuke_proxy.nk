@@ -1,0 +1,133 @@
+#! /Applications/Nuke12.2v3/Nuke12.2v3.app/Contents/MacOS/libnuke-12.2.3.dylib -nx
+#write_info output file:"/some/output.mov" format:"1920 1080 1" chans:":rgba.red:rgba.green:rgba.blue:" framerange:"1001 1001" fps:"0" colorspace:"default" datatype:"unknown" transfer:"unknown" views:"main" colorManagement:"Nuke"
+version 12.2 v3
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="23" w="1680" h="1005" maximized="1" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1017" stretch="1"/>
+            <splitter orientation="2">
+                <split size="578"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="407"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /Users/jonas/projects/das-element/resources/scripts/custom/examples/nuke/nuke_proxy.nk
+ frame 1001
+ first_frame 1001
+ last_frame 1001
+ format "1920 1080 0 0 1920 1080 1 HD_1080"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode1
+ tile_color 0x153dffff
+ label reformat
+ note_font_size 24
+ xpos 60
+ ypos -284
+ bdheight 180
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode2
+ tile_color 0x4c8e00ff
+ label colorspace
+ note_font_size 24
+ xpos 60
+ ypos -96
+ bdheight 108
+}
+Read {
+ inputs 0
+ file /some/input/path
+ origset true
+ raw true
+ name input
+ xpos 70
+ ypos -389
+}
+Log2Lin {
+ name Log2Lin1
+ xpos 70
+ ypos -204
+}
+Reformat {
+ format "1920 1080 0 0 1920 1080 1 HD_1080"
+ resize fit
+ black_outside true
+ pbb true
+ name Reformat2
+ xpos 70
+ ypos -180
+}
+Crop {
+ box {0 0 1920 1080}
+ crop false
+ name Crop4
+ xpos 70
+ ypos -156
+}
+Log2Lin {
+ name Log2Lin2
+ xpos 70
+ ypos -132
+}
+Colorspace {
+ colorspace_out rec709
+ name colorspace
+ xpos 70
+ ypos -16
+}
+Write {
+ file /some/output.mov
+ raw true
+ file_type mov
+ mov64_format "mov (QuickTime / MOV)"
+ mov64_codec h264
+ mov64_pixel_format {{2} "yuvj420p\tYCbCr 4:2:0 8-bit" "yuvj422p\tYCbCr 4:2:2 8-bit" "yuvj444p\tYCbCr 4:4:4 8-bit"}
+ mov64_quality High
+ mov64_advanced 1
+ mov64_fast_start true
+ mov64_write_timecode true
+ mov64_gop_size 12
+ mov64_b_frames 0
+ mov64_bitrate 28000
+ mov64_bitrate_tolerance 0
+ mov64_quality_min 1
+ mov64_quality_max 3
+ checkHashOnRead false
+ name output
+ xpos 70
+ ypos 55
+}

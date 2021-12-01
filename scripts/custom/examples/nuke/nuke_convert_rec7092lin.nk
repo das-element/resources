@@ -1,0 +1,80 @@
+#! /Applications/Nuke12.2v3/Nuke12.2v3.app/Contents/MacOS/libnuke-12.2.3.dylib -nx
+#write_info output file:"/some/output.exr" format:"1920 1080 1" chans:":rgba.red:rgba.green:rgba.blue:" framerange:"1001 1001" fps:"0" colorspace:"default (linear)" datatype:"16 bit half" transfer:"unknown" views:"main" colorManagement:"Nuke"
+version 12.2 v3
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="0" y="23" w="1680" h="1005" maximized="1" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1017" stretch="1"/>
+            <splitter orientation="2">
+                <split size="578"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="407"/>
+                <dock id="" activePageId="DAG.1" focus="true">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name /Users/jonas/projects/das-element/resources/scripts/custom/examples/nuke/nuke_convert_rec7092lin.nk
+ first_frame 1001
+ last_frame 1001
+ format "1920 1080 0 0 1920 1080 1 HD_1080"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+Read {
+ inputs 0
+ file /some/input/path
+ origset true
+ raw true
+ name input
+ xpos 70
+ ypos -162
+}
+Colorspace {
+ colorspace_in rec709
+ name colorspace
+ xpos 70
+ ypos -72
+}
+TimeOffset {
+ time ""
+ name timeoffset
+ label "An expression value will be set by the Python script"
+ xpos 70
+ ypos -48
+}
+Write {
+ file /some/output.exr
+ raw true
+ file_type exr
+ first_part rgba
+ name output
+ xpos 70
+ ypos -16
+}
