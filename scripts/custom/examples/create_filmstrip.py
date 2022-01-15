@@ -59,9 +59,9 @@ def frames_to_timecode(frames, frame_rate):
     h = int(frames / 86400)
     m = int(frames / 1440) % 60
     s = int((frames % 1440) / frame_rate)
-    f = frames % 1440 % frame_rate
-    return '%02d:%02d:%02d.%02d' % (h, m, s, f)
-
+    f = '%.3f' % ((1.0 / float(frame_rate)) * float(frames))
+    f = f.split('.')[1] # remove seconds -> convert from 0.080 to 080
+    return '%02d:%02d:%02d.%03s' % (h, m, s, f)
 
 def get_movie_frame_rate(path):
     command = [
