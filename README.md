@@ -3,7 +3,7 @@
 Useful example scripts and python hooks for customization of **das element**
 
 
-Check out the documentation page for more information: [docu.das-element.com](docu.das-element.com)
+Check out the documentation page for more information: [https://docu.das-element.com](docu.das-element.com)
 
 
 &nbsp;
