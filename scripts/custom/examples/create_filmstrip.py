@@ -106,8 +106,8 @@ def execute_command(command):
                              check=False)
 
     returncode = process.returncode
-    output = process.stdout.decode('utf8').strip('\n')
-    error = process.stderr.decode('utf8').strip('\n')
+    output = process.stdout.decode('utf8', 'ignore').strip('\n')
+    error = process.stderr.decode('utf8', 'ignore').strip('\n')
     return returncode, output, error
 
 
