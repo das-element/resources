@@ -66,7 +66,7 @@ frame_last = int(nuke.rawArgs[-1])
 # calculate time offset to start at the default first frame
 default_first_frame = 1001
 render_frame_first = default_first_frame
-render_frame_last = default_first_frame + (frame_last - frame_first)
+render_frame_last = default_first_frame + (frame_last - frame_first) - 1 
 
 # Nuke starts movie files with Frame 1, not Frame 0
 source_is_movie = path_input.split('.')[-1] in ['mov', 'mp4']
