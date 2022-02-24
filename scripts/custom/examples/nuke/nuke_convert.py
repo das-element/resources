@@ -63,6 +63,17 @@ source_frame_last = int(nuke.rawArgs[-3])
 frame_first = int(nuke.rawArgs[-2])
 frame_last = int(nuke.rawArgs[-1])
 
+# calculate time offset to start at the default first frame
+default_first_frame = 1001
+render_frame_first = default_first_frame
+render_frame_last = default_first_frame + (frame_last - frame_first)
+
+# Nuke starts movie files with Frame 1, not Frame 0
+source_is_movie = path_input.split('.')[-1] in ['mov', 'mp4']
+if source_is_movie :
+    source_frame_first += 1
+    source_frame_last += 1
+
 # open template nuke script
 nuke.scriptOpen(path_script)
 
@@ -72,6 +83,8 @@ node_read = nuke.toNode('input')
 node_read['file'].setValue(path_input)
 node_read['first'].setValue(source_frame_first)
 node_read['last'].setValue(source_frame_last)
+node_read['origfirst'].setValue(source_frame_first)
+node_read['origlast'].setValue(source_frame_last)
 
 # set the file paths for the output
 print('Write Node Path: %s' % path_output)
@@ -83,8 +96,7 @@ node_write['file'].setValue(path_output)
 # node_colorspace['colorspace_in'].setValue('RGB')  # RGB is Linear
 # node_colorspace['colorspace_out'].setValue('RGB')  # RGB is Linear
 
-# calculate time offset to start at the default first frame
-default_first_frame = 1001
+# set the time offset
 node_timeoffset = nuke.toNode('timeoffset')
 node_timeoffset['time_offset'].setExpression('%s-[value [topnode].first]' %
                                              default_first_frame)
@@ -104,4 +116,4 @@ if not os.path.exists(path_script_directory):
 nuke.scriptSaveAs(path_script_job)
 
 # render the job
-nuke.execute(node_write, frame_first, frame_last, continueOnError=False)
+nuke.execute(node_write, render_frame_first, render_frame_last, continueOnError=False)
