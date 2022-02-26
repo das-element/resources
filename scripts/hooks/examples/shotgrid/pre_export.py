@@ -14,6 +14,8 @@ This scripts converts the data so you can import a CSV file into Autodesk Shotgr
 Example output from das element:
 
 [{
+    'uuuid': 'f4ec01102a4440769be04d9004a717c8',
+    'uuuid_short': 'f4ec0110',
     'name': 'awesome_element_00044',
     'category': 'fire',
     'category_id': 'Q3196',
