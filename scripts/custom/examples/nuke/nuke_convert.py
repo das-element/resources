@@ -63,10 +63,8 @@ source_frame_last = int(nuke.rawArgs[-3])
 frame_first = int(nuke.rawArgs[-2])
 frame_last = int(nuke.rawArgs[-1])
 
-# calculate time offset to start at the default first frame
+# define default first frame of sequence
 default_first_frame = 1001
-render_frame_first = default_first_frame
-render_frame_last = default_first_frame + (frame_last - frame_first) - 1 
 
 # Nuke starts movie files with Frame 1, not Frame 0
 source_is_movie = path_input.split('.')[-1] in ['mov', 'mp4']
@@ -116,4 +114,4 @@ if not os.path.exists(path_script_directory):
 nuke.scriptSaveAs(path_script_job)
 
 # render the job
-nuke.execute(node_write, render_frame_first, render_frame_last, continueOnError=False)
+nuke.execute(node_write, frame_first, frame_last, continueOnError=False)
