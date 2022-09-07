@@ -31,7 +31,8 @@ def main(*args):
     result = []
 
     for item in items:
-        path_items = item.get('path', '').split('/')
+        path = item.get('path', '').replace('\\', '/')
+        path_items = path.split('/')
         for path_item in path_items:
             # search for keywords in file path
             if path_item in TAGS:
