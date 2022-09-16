@@ -1,4 +1,17 @@
-# adjust to your ffprobe executable file
+
+"""
+           __                   __                          __
+      ____/ /___ ______   ___  / /__  ____ ___  ___  ____  / /_
+     / __  / __ `/ ___/  / _ \/ / _ \/ __ `__ \/ _ \/ __ \/ __/
+    / /_/ / /_/ (__  )  /  __/ /  __/ / / / / /  __/ / / / /_
+    \__,_/\__,_/____/   \___/_/\___/_/ /_/ /_/\___/_/ /_/\__/
+
+Script get the metadata of a file with ffprobe.
+1. adjust to your ffprobe executable file
+2. we assume here that the metadata is a string that separates tags by comma
+
+"""
+
 EXECUTABLE_FFPROBE = 'ffprobe'
 
 
