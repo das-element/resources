@@ -20,9 +20,15 @@ def get_hierarchy_from_folder(root_path):
         root_path += '/'  # need to add a trailing slash here - otherwise we get an empty data dict
         for path in Path(root_path).rglob('*'):
             data = result
+            if path.is_file():
+                # only validate folders
+                continue
+
+            # path should only have forward slashes - that's important for Windows
+            path_string = str(path).replace('\\', '/')
             # remove root folder since we are only interessted in the folder structure
-            path_strip_root = str(path).replace(root_path, '')
-            items = path_strip_root.split("/")
+            path_strip_root = path_string.replace(root_path, '')
+            items = path_strip_root.split('/')
             for item in items:
                 data = data.setdefault(item, {})
         return result
