@@ -138,8 +138,8 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
                                             frame_rate)
 
     command += [
-        '-vf', '"{}"'.format(scale), '-vcodec', 'png', '-q:v', '5',
-        '-frames:v', '1', '"{}"'.format(path_output)
+        '-vf', '"{}"'.format(scale), '-q:v', '5', '-frames:v', '1',
+        '"{}"'.format(path_output)
     ]
 
     returncode, output, error = execute_command(command)
