@@ -100,7 +100,7 @@ def main(*args):
     filter_scale += 'pad={}:{}:(ow-iw)/2:(oh-ih)/2'.format(width, height)
 
     arguments += [
-        '-y', '-vf', filter_scale, '-vcodec', 'png', '-q:v', '5', '-frames:v',
+        '-y', '-vf', filter_scale, '-q:v', '5', '-frames:v',
         '1', path_output
     ]
 
