@@ -52,12 +52,28 @@ else:
     raise Exception("Unknown operating system: {}".format(CURRENT_OS))
 
 
-def frames_to_timecode(frames, frame_rate):
-    h = int(frames / 86400)
-    m = int(frames / 1440) % 60
-    s = int((frames % 1440) / frame_rate)
-    f = frames % 1440 % frame_rate
-    return '%02d:%02d:%02d.%02d' % (h, m, s, f)
+def frames_to_timestamp(frames, frame_rate):
+    # Python 2
+    # h = operator.floordiv(frames, 3600 * frame_rate)
+    # Python 3
+    h = frames // (3600 * frame_rate)
+
+    #  check to see if hours >= 24. SMPTE Timecode only goes to 23:59
+    if h >= 24:
+        h = h % 24
+        frames = frames - (86400 * frame_rate)
+
+    # Python 2
+    # m = operator.floordiv(frames % (3600 * frame_rate), 60 * frame_rate)
+    # Python 3
+    m = (frames % (3600 * frame_rate)) // (60 * frame_rate)
+
+    value = (1.0 / float(frame_rate)) * float(frames) % 60
+    value = '%.3f' % (value)
+    s = int(value.split('.')[0])  # get secods
+    f = value.split('.')[1]  # get millisecond
+
+    return '%02d:%02d:%02d.%03s' % (h, m, s, f)
 
 
 def get_movie_frame_rate(path):
@@ -66,7 +82,10 @@ def get_movie_frame_rate(path):
         'v:0', '-show_entries', 'stream=r_frame_rate', '"{}"'.format(path)
     ]
     command_string = ' '.join(command)
-    return eval(os.popen(command_string).read())
+    result = eval(os.popen(command_string).read())
+    frame_rate = round(result, 3)
+    print('Movie frame rate: {}'.format(frame_rate))
+    return frame_rate
 
 
 def main(*args):
@@ -84,7 +103,7 @@ def main(*args):
 
     if media_type == 'movie':
         frame_rate = get_movie_frame_rate(path)
-        timestamp = frames_to_timecode(frame_center, frame_rate)
+        timestamp = frames_to_timestamp(frame_center, frame_rate)
         arguments += ['-i', path, '-ss', timestamp]
 
     if media_type == 'sequence':

@@ -62,12 +62,27 @@ else:
     raise Exception("Unknown operating system: {}".format(CURRENT_OS))
 
 
-def frames_to_timecode(frames, frame_rate):
-    h = int(frames / 86400)
-    m = int(frames / 1440) % 60
-    s = int((frames % 1440) / frame_rate)
-    f = '%.3f' % ((1.0 / float(frame_rate)) * float(frames))
-    f = f.split('.')[1]  # remove seconds -> convert from 0.080 to 080
+def frames_to_timestamp(frames, frame_rate):
+    # Python 2
+    # h = operator.floordiv(frames, 3600 * frame_rate)
+    # Python 3
+    h = frames // (3600 * frame_rate)
+
+    #  check to see if hours >= 24. SMPTE Timecode only goes to 23:59
+    if h >= 24:
+        h = h % 24
+        frames = frames - (86400 * frame_rate)
+
+    # Python 2
+    # m = operator.floordiv(frames % (3600 * frame_rate), 60 * frame_rate)
+    # Python 3
+    m = (frames % (3600 * frame_rate)) // (60 * frame_rate)
+
+    value = (1.0 / float(frame_rate)) * float(frames) % 60
+    value = '%.3f' % (value)
+    s = int(value.split('.')[0])  # get secods
+    f = value.split('.')[1]  # get millisecond
+
     return '%02d:%02d:%02d.%03s' % (h, m, s, f)
 
 
@@ -78,8 +93,9 @@ def get_movie_frame_rate(path):
     ]
     command_string = ' '.join(command)
     result = eval(os.popen(command_string).read())
-    print('Movie frame rate: {}'.format(result))
-    return result
+    frame_rate = round(result, 3)
+    print('Movie frame rate: {}'.format(frame_rate))
+    return frame_rate
 
 
 def get_frame_numbers(frame_first, frame_last, number_of_frames):
@@ -164,7 +180,7 @@ def _get_arguments_for_sequence(path_input, frame_number, frame_first):
 
 def _get_arguments_for_movie(path_input, frame, frame_rate):
     arguments = []
-    timestamp = frames_to_timecode(int(frame), frame_rate)
+    timestamp = frames_to_timestamp(int(frame), frame_rate)
     # fix for missing last frame with mp4 files
     arguments += ['-ignore_editlist', '1']
     arguments += [
