@@ -28,7 +28,8 @@ def main(*args):
         if match:
             job_id = match.group(1)
             job_ids.append(job_id)
-            print('Job ID: {}'.format(job_id))
+            print('Job ID:')
+            print(job_id)
 
     # returns data that can later be access as "custom"
     # in this example: <custom.dependency>
