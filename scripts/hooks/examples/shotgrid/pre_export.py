@@ -15,7 +15,7 @@ Example output from das element:
 
 [{
     'uuuid': '01859093927b96d3a5131f9cd42d8ed7',
-    'uuuid_short': '927b96d3',
+    'uuuid_short': '96d3a513',
     'name': 'awesome_element_00044',
     'category': 'fire',
     'category_id': 'Q3196',
