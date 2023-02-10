@@ -19,7 +19,7 @@ import nukescripts
 # check if the file(s) dropped belongs to the elements library
 # update this here to your library root path
 library_root = "/mnt/library/vfx_elements"
-default_first_frame = 1001
+default_first_frame = 1000
 
 
 def import_element_default(path):
