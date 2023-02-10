@@ -65,6 +65,10 @@ def file_handler(path):
 
 
 def custom_drop_handler(mimeType, value):
+    # keep default copy & paste behavior inside Nuke
+    if value.startswith('set cut_paste_input'):
+        return False
+
     # if the dropped file path(s) is located in the asset library
     # apply the custom drop behavior
     if value.startswith(library_root):
