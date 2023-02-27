@@ -218,8 +218,9 @@ def main(*args):
                                    frame_width, height, frame_rate,
                                    frame_first)
 
-    # if a clip is shorter than the frames, make sure to add black frames
-    padding = 'pad={}:{}:0:0'.format(number_of_frames * frame_width, height)
+    # if a clip is shorter than the frames, make sure to add blank frames
+    padding = 'pad={}:{}:0:0:#161a21'.format(number_of_frames * frame_width,
+                                             height)
 
     if len(frame_numbers) > 1:
         # if a movie file has only one frame it will not work
