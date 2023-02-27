@@ -68,7 +68,7 @@ default_first_frame = 1001
 
 # Nuke starts movie files with Frame 1, not Frame 0
 source_is_movie = path_input.split('.')[-1] in ['mov', 'mp4']
-if source_is_movie :
+if source_is_movie:
     source_frame_first += 1
     source_frame_last += 1
 
