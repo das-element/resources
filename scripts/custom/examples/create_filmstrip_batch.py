@@ -259,9 +259,9 @@ def main(*args):
         number_of_batch_frames = data['frames']
         path_output_batch = '{}-b{}.jpg'.format(path_output, batch_id)
 
-        # if a clip is shorter than the frames, make sure to add black frames
-        padding = 'pad={}:{}:0:0'.format(number_of_batch_frames * frame_width,
-                                         height)
+        # if a clip is shorter than the frames, make sure to add blank frames
+        padding = 'pad={}:{}:0:0:#161a21'.format(
+            number_of_batch_frames * frame_width, height)
 
         if len(frame_numbers) > 1:
             # if a movie file has only one frame it will not work
@@ -290,8 +290,9 @@ def main(*args):
 
     # finally stitch together the batches to the final filmstrip
 
-    # if a clip is shorter than the frames, make sure to add black frames
-    padding = 'pad={}:{}:0:0'.format(number_of_frames * frame_width, height)
+    # if a clip is shorter than the frames, make sure to add blank frames
+    padding = 'pad={}:{}:0:0:#161a21'.format(number_of_frames * frame_width,
+                                             height)
 
     if len(batch_output_paths) > 1:
         # if a movie file has only one frame it will not work
