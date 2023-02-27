@@ -26,7 +26,7 @@ TAGS = ['assets', 'environments', 'hdri', 'photogrammetry', 'texture']
 
 def main(*args):
     # args will be a List of Dicts:
-    # [{'path': '/path/to/some/file.mov', 'category': '', 'tags': []}]
+    # [{'path': '/path/to/some/file.mov', 'category': '', 'tags': [], 'colorspace': 'rec709'}]
     items = args[0]
     result = []
 
@@ -48,6 +48,10 @@ def main(*args):
             # set last tag as the category
             item['category'] = item['tags'][-1]
 
+        # overwrite colorspace reference value for an element
+        # please note: this does not acctually change the colorspace and does not effect the actual colorspace of the files on disk
+        #item['colorspace'] = 'my colorspacename'
+           
         result.append(item)
     return result
 
