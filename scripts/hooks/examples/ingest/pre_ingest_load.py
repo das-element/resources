@@ -26,7 +26,7 @@ TAGS = ['assets', 'environments', 'hdri', 'photogrammetry', 'texture']
 
 def main(*args):
     # args will be a List of Dicts:
-    # [{'path': '/path/to/some/file.mov', 'category': '', 'tags': [], 'colorspace': 'rec709'}]
+    # [{'path': '/path/to/some/file.mov', 'category': 'torch', 'tags': ['fire', 'flame'], 'colorspace': 'rec709', 'metadata': {'key1': 'value1', 'key2': 'value2'} }]
     items = args[0]
     result = []
 
@@ -50,8 +50,11 @@ def main(*args):
 
         # overwrite colorspace reference value for an element
         # please note: this does not acctually change the colorspace and does not effect the actual colorspace of the files on disk
-        #item['colorspace'] = 'my colorspacename'
-           
+        # item['colorspace'] = 'my colorspacename'
+
+        # add custom metadata
+        item['metadata'] = {'key1': 'value1', 'key2': 'value2'}
+
         result.append(item)
     return result
 
