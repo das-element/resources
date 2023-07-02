@@ -196,7 +196,7 @@ def main(*args):
         print('No sequence or movie file - will not render filmstrip')
         return False
 
-    paths_frames = []  # temporary file pathes
+    paths_frames = []  # temporary file paths
 
     command = [EXECUTABLE_FFMPEG, '-y', '-vsync', '0']
     streams = ''
