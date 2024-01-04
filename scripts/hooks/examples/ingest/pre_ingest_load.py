@@ -25,8 +25,20 @@ TAGS = ['assets', 'environments', 'hdri', 'photogrammetry', 'texture']
 
 
 def main(*args):
-    # args will be a List of Dicts:
-    # [{'path': '/path/to/some/file.mov', 'category': 'torch', 'tags': ['fire', 'flame'], 'colorspace': 'rec709', 'metadata': {'key1': 'value1', 'key2': 'value2'} }]
+    '''
+        args will be a List of Dicts:
+
+        [{
+            'path': '/path/to/some/file.mov',
+            'path_thumbnail': '/path/to/some/thumbnail.jpg',
+            'path_proxy': '/path/to/some/proxy.mov',
+            'category': 'torch',
+            'tags': ['fire', 'flame'],
+            'colorspace': 'rec709',
+            'mapping': 'copy & rename',
+            'metadata': {'key1': 'value1', 'key2': 'value2'}
+        }]
+    '''
     items = args[0]
     result = []
 
@@ -52,8 +64,17 @@ def main(*args):
         # please note: this does not acctually change the colorspace and does not effect the actual colorspace of the files on disk
         # item['colorspace'] = 'my colorspacename'
 
+        # set template mapping
+        item['mapping'] = 'copy & rename'
+
         # add custom metadata
         item['metadata'] = {'key1': 'value1', 'key2': 'value2'}
+
+        # custom thumbnail
+        item['path_thumbnail'] = '/path/to/custom/thumbnail.jpg'
+
+        # custom proxy file
+        item['path_proxy'] = '/path/to/custom/proxy.mov'
 
         result.append(item)
     return result
