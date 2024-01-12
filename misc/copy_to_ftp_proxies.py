@@ -11,11 +11,11 @@ import shutil
 
 print(sys.argv)
 
-path_dropbox = "/Volumes/RAID_04 [48TB - T3]/Dropbox (Personal)/VFX Elements"
-library_root = "/Volumes/AssetShare/_VFX_ELEMENTS"
+path_remote = "/mnt/path/to/remote/folder"
+library_root = "/mnt/path/to/internal/library"
 
 path_element = ' '.join(sys.argv[1:])
-path_output = path_element.replace(library_root, path_dropbox)
+path_output = path_element.replace(library_root, path_remote)
 
 print(path_element)
 print(path_output)
