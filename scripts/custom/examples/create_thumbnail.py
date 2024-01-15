@@ -118,7 +118,7 @@ def main(*args):
     filter_scale += 'pad={}:{}:(ow-iw)/2:(oh-ih)/2'.format(width, height)
 
     arguments += [
-        '-y', '-vf', '"premultiply=inplace=1,{}"'.format(filter_scale), '-q:v', '5', '-frames:v', '1', path_output
+        '-y', '-vf', '"premultiply=inplace=1,{}"'.format(filter_scale), '-q:v', '5', '-frames:v', '1', '-update', 'true', path_output
     ]
 
     command = executable + arguments
