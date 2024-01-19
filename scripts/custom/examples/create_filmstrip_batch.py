@@ -181,8 +181,10 @@ def _get_arguments_for_sequence(path_input, frame_number, frame_first):
 def _get_arguments_for_movie(path_input, frame, frame_rate):
     arguments = []
     timestamp = frames_to_timestamp(int(frame), frame_rate)
-    # fix for missing last frame with mp4 files
-    arguments += ['-ignore_editlist', '1']
+
+    if not Path(path_input).suffix in ('.mkv', '.mp4', '.mxf'):
+        arguments += ['-ignore_editlist', '1']
+
     arguments += [
         '-ss', timestamp, '-noaccurate_seek', '-i', '"{}"'.format(path_input)
     ]
