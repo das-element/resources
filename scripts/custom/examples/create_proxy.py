@@ -87,6 +87,20 @@ def get_movie_frame_rate(path):
     return frame_rate
 
 
+def execute_command(command):
+    command_as_string = ' '.join(command)
+    print(command_as_string)
+
+    process = subprocess.run(command_as_string,
+                             capture_output=True,
+                             shell=True)
+
+    returncode = process.returncode
+    output = process.stdout.decode('utf8', 'ignore').strip('\n')
+    error = process.stderr.decode('utf8', 'ignore').strip('\n')
+    return returncode, output, error
+
+
 def main(*args):
     path, path_output, media_type, frame_first = args[0]
 
@@ -94,26 +108,27 @@ def main(*args):
     width = 1920
     height = 1080
 
-    executable = [EXECUTABLE_FFMPEG]
-    arguments = []
+    command = [EXECUTABLE_FFMPEG]
 
     if media_type == 'image':
         print('No sequence or movie file - will not render filmstrip')
         return False
 
         # as an alternative you could loop an still image for 1 second
-        # arguments += ['-loop', '1', '-i', path, '-t', '1']
+        # command += ['-loop', '1', '-i', path, '-t', '1']
 
     if media_type == 'movie':
         frame_rate = get_movie_frame_rate(path)
-        arguments += ['-i', path]
+        command += ['-i', path]
 
     if media_type == 'sequence':
         extension = Path(path).suffix
+        # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
         # %04d defines the frame padding of 4 -> 0001
+        frame_padding = '%0{}d'.format(len(path.split('.')[-2]))
         path_string_format = '{}.{}{}'.format('.'.join(path.split('.')[:-2]),
-                                              '%04d', extension)
-        arguments += [
+                                              frame_padding, extension)
+        command += [
             '-start_number',
             str(frame_first), '-r',
             str(frame_rate), '-f', 'image2', '-i', path_string_format
@@ -121,7 +136,7 @@ def main(*args):
 
     timestamp_start = frames_to_timestamp(int(frame_first), frame_rate)
 
-    arguments += [
+    command += [
         '-y', '-r',
         str(frame_rate), '-vf',
         'premultiply=inplace=1,scale={0}:{1}:force_original_aspect_ratio=decrease,pad={0}:{1}:(ow-iw)/2:(oh-ih)/2'
@@ -131,26 +146,20 @@ def main(*args):
         path_output
     ]
 
-    command = executable + arguments
-    print('Command to execute:')
-    print(' '.join(command))
-
+    # make sure folders exists
     if not Path(path_output).parent.exists():
         Path(path_output).parent.mkdir()
 
-    process = subprocess.Popen(command,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
-    output, error = process.communicate()
+    # execute command
+    returncode, output, error = execute_command(command)
 
-    if process.returncode != 0:
-        print('Something went wrong!')
-        print(process.returncode)
+    if returncode != 0:
+        print(returncode)
         print(output)
         print(error)
-        raise Exception("Oh no ... something went wrong!")
+        raise Exception("Oh no .... something went wrong!")
 
-    return process.returncode
+    return returncode
 
 
 if __name__ == '__main__':
