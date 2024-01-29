@@ -87,6 +87,20 @@ def get_movie_frame_rate(path):
     return frame_rate
 
 
+def execute_command(command):
+    command_as_string = ' '.join(command)
+    print(command_as_string)
+
+    process = subprocess.run(command_as_string,
+                             capture_output=True,
+                             shell=True)
+
+    returncode = process.returncode
+    output = process.stdout.decode('utf8', 'ignore').strip('\n')
+    error = process.stderr.decode('utf8', 'ignore').strip('\n')
+    return returncode, output, error
+
+
 def main(*args):
     path, path_output, media_type, first, last = args[0]
 
@@ -94,52 +108,51 @@ def main(*args):
     height = 540
     frame_center = int(int(first) + round((int(last) - int(first)) / 2))
 
-    executable = [EXECUTABLE_FFMPEG]
-    arguments = []
+    command = [EXECUTABLE_FFMPEG]
 
     if media_type == 'image':
-        arguments += ['-i', path]
+        command += ['-i', path]
 
     if media_type == 'movie':
         frame_rate = get_movie_frame_rate(path)
         timestamp = frames_to_timestamp(frame_center, frame_rate)
-        arguments += ['-i', path, '-ss', timestamp]
+        command += ['-i', path, '-ss', timestamp]
 
     if media_type == 'sequence':
         extension = Path(path).suffix
-        # {:04d} defines the frame padding of 4 -> 0001
-        path_center_frame = '{}.{:04d}{}'.format(
-            '.'.join(path.split('.')[:-2]), frame_center, extension)
+        # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
+        # %04d defines the frame padding of 4 -> 0001
+        frame_padding = '%0{}d'.format(len(path.split('.')[-2]))
+        path_center_frame = '{}.{}{}'.format('.'.join(path.split('.')[:-2]),
+                                             frame_padding % frame_center,
+                                             extension)
+
         # make sure to convert from linear to videospace
-        arguments += ['-gamma', '2.2', '-i', path_center_frame]
+        command += ['-i', path_center_frame]
 
     filter_scale = 'scale={}:{}:'.format(width, height)
     filter_scale += 'force_original_aspect_ratio=decrease,'
     filter_scale += 'pad={}:{}:(ow-iw)/2:(oh-ih)/2'.format(width, height)
 
-    arguments += [
-        '-y', '-vf', '"premultiply=inplace=1,{}"'.format(filter_scale), '-q:v', '5', '-frames:v', '1', '-update', 'true', path_output
+    command += [
+        '-y', '-vf', '"premultiply=inplace=1,{}"'.format(filter_scale), '-q:v',
+        '5', '-frames:v', '1', '-update', 'true', path_output
     ]
 
-    command = executable + arguments
-    print('Command to execute:')
-    print(' '.join(command))
-
+    # make sure folders exists
     if not Path(path_output).parent.exists():
         Path(path_output).parent.mkdir()
 
-    process = subprocess.Popen(command,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
-    output, error = process.communicate()
+    # execute command
+    returncode, output, error = execute_command(command)
 
-    if process.returncode != 0:
-        print(process.returncode)
+    if returncode != 0:
+        print(returncode)
         print(output)
         print(error)
-        raise Exception("Oh no ... something went wrong!")
+        raise Exception("Oh no .... something went wrong!")
 
-    return process.returncode
+    return returncode
 
 
 if __name__ == '__main__':
