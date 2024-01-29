@@ -35,7 +35,6 @@ params:
 """
 
 import os
-import re
 import subprocess
 import sys
 from pathlib import Path
@@ -119,8 +118,7 @@ def execute_command(command):
 
     process = subprocess.run(command_as_string,
                              capture_output=True,
-                             shell=True,
-                             check=False)
+                             shell=True)
 
     returncode = process.returncode
     output = process.stdout.decode('utf8', 'ignore').strip('\n')
@@ -147,16 +145,16 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
                                             frame_rate)
 
     command += [
-        '-vf', '"premultiply=inplace=1,{}"'.format(scale), '-q:v', '5', '-frames:v', '1',
-        '"{}"'.format(path_output)
+        '-vf', '"premultiply=inplace=1,{}"'.format(scale), '-q:v', '5',
+        '-frames:v', '1', '"{}"'.format(path_output)
     ]
 
     returncode, output, error = execute_command(command)
 
     if returncode != 0:
-        print('Returncode: {}'.format(returncode))
-        print('Output: {}'.format(output))
-        print('Error: {}'.format(error))
+        print(returncode)
+        print(output)
+        print(error)
 
     return True
 
@@ -168,7 +166,7 @@ def _get_arguments_for_sequence(path_input, frame_number, frame_first):
     path_frame = '{}.{:04d}{}'.format('.'.join(path_input.split('.')[:-2]),
                                       frame, extension)
     # make sure to convert from linear to videospace
-    return ['-gamma', '2.2', '-i', '"{}"'.format(path_frame)]
+    return ['-i', '"{}"'.format(path_frame)]
 
 
 def _get_arguments_for_movie(path_input, frame, frame_rate):
@@ -207,6 +205,7 @@ def main(*args):
     else:
         frame_rate = 24  # set some random frame rate for the image sequence
 
+    # make sure folders exists
     if not Path(path_output).parent.exists():
         Path(path_output).parent.mkdir()
 
@@ -235,6 +234,7 @@ def main(*args):
         '"{}"'.format(path_output)
     ]
 
+    # execute command
     returncode, output, error = execute_command(command)
 
     # finally delete the temporary frames
