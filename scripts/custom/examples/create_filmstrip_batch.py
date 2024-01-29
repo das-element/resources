@@ -120,21 +120,6 @@ def get_frame_numbers(frame_first, frame_last, number_of_frames):
     return frame_numbers[:number_of_frames]
 
 
-def execute_command(command):
-    command_as_string = ' '.join(command)
-    print(command_as_string)
-
-    process = subprocess.run(command_as_string,
-                             capture_output=True,
-                             shell=True,
-                             check=False)
-
-    returncode = process.returncode
-    output = process.stdout.decode('utf8', 'ignore').strip('\n')
-    error = process.stderr.decode('utf8', 'ignore').strip('\n')
-    return returncode, output, error
-
-
 def write_temp_frame_thumbnail(media_type, path_input, path_output,
                                frame_number, width, height, frame_rate,
                                frame_first):
@@ -154,8 +139,8 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
                                             frame_rate)
 
     command += [
-        '-vf', '"premultiply=inplace=1,{}"'.format(scale), '-q:v', '5', '-frames:v', '1',
-        '"{}"'.format(path_output)
+        '-vf', '"premultiply=inplace=1,{}"'.format(scale), '-q:v', '5',
+        '-frames:v', '1', '"{}"'.format(path_output)
     ]
 
     returncode, output, error = execute_command(command)
@@ -171,11 +156,13 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
 def _get_arguments_for_sequence(path_input, frame_number, frame_first):
     frame = int(frame_first) + int(frame_number)
     extension = Path(path_input).suffix
-    # {:04d} defines the frame padding of 4 -> 0001
-    path_frame = '{}.{:04d}{}'.format('.'.join(path_input.split('.')[:-2]),
-                                      frame, extension)
+    # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
+    # %04d defines the frame padding of 4 -> 0001
+    frame_padding = '%0{}d'.format(len(path_input.split('.')[-2]))
+    path_frame = '{}.{}{}'.format('.'.join(path_input.split('.')[:-2]),
+                                  frame_padding % frame, extension)
     # make sure to convert from linear to videospace
-    return ['-gamma', '2.2', '-i', '"{}"'.format(path_frame)]
+    return ['-i', '"{}"'.format(path_frame)]
 
 
 def _get_arguments_for_movie(path_input, frame, frame_rate):
@@ -189,6 +176,20 @@ def _get_arguments_for_movie(path_input, frame, frame_rate):
         '-ss', timestamp, '-noaccurate_seek', '-i', '"{}"'.format(path_input)
     ]
     return arguments
+
+
+def execute_command(command):
+    command_as_string = ' '.join(command)
+    print(command_as_string)
+
+    process = subprocess.run(command_as_string,
+                             capture_output=True,
+                             shell=True)
+
+    returncode = process.returncode
+    output = process.stdout.decode('utf8', 'ignore').strip('\n')
+    error = process.stderr.decode('utf8', 'ignore').strip('\n')
+    return returncode, output, error
 
 
 def main(*args):
@@ -214,6 +215,7 @@ def main(*args):
     else:
         frame_rate = 24  # set some random frame rate for the image sequence
 
+    # make sure folders exists
     if not Path(path_output).parent.exists():
         Path(path_output).parent.mkdir()
 
@@ -278,6 +280,7 @@ def main(*args):
         ]
 
         returncode, output, error = execute_command(command_batch)
+
         if returncode != 0:
             print(returncode)
             print(output)
