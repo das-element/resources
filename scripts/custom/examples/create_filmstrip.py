@@ -162,9 +162,11 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
 def _get_arguments_for_sequence(path_input, frame_number, frame_first):
     frame = int(frame_first) + int(frame_number)
     extension = Path(path_input).suffix
-    # {:04d} defines the frame padding of 4 -> 0001
-    path_frame = '{}.{:04d}{}'.format('.'.join(path_input.split('.')[:-2]),
-                                      frame, extension)
+    # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
+    # %04d defines the frame padding of 4 -> 0001
+    frame_padding = '%0{}d'.format(len(path_input.split('.')[-2]))
+    path_frame = '{}.{}{}'.format('.'.join(path_input.split('.')[:-2]),
+                                  frame_padding % frame, extension)
     # make sure to convert from linear to videospace
     return ['-i', '"{}"'.format(path_frame)]
 
