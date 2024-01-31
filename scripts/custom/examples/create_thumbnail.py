@@ -32,6 +32,7 @@ params:
 """
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -111,24 +112,30 @@ def main(*args):
     command = [EXECUTABLE_FFMPEG]
 
     if media_type == 'image':
-        command += ['-i', path]
+        command += ['-i', '"{}"'.format(path)]
 
     if media_type == 'movie':
         frame_rate = get_movie_frame_rate(path)
         timestamp = frames_to_timestamp(frame_center, frame_rate)
-        command += ['-i', path, '-ss', timestamp]
+        command += ['-i', '"{}"'.format(path), '-ss', timestamp]
 
     if media_type == 'sequence':
-        extension = Path(path).suffix
         # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
         # %04d defines the frame padding of 4 -> 0001
-        frame_padding = '%0{}d'.format(len(path.split('.')[-2]))
-        path_center_frame = '{}.{}{}'.format('.'.join(path.split('.')[:-2]),
-                                             frame_padding % frame_center,
-                                             extension)
+        regex = r'(\d+|[%][0]\d[d]|[#]+)\.\w{2,}$'
+        match = re.search(regex, path)
+
+        if not match:
+            raise Exception('Failed to validate frame padding of source path')
+
+        value = match.groups()[0]
+        frame_padding = value if '%' in value else '%0{}d'.format(len(value))
+        frame = frame_padding % frame_center
+        stem_name = re.sub(regex, frame, Path(path).name)
+        path_center_frame = Path(path).with_stem(stem_name)
 
         # make sure to convert from linear to videospace
-        command += ['-i', path_center_frame]
+        command += ['-i', '"{}"'.format(path_center_frame)]
 
     filter_scale = 'scale={}:{}:'.format(width, height)
     filter_scale += 'force_original_aspect_ratio=decrease,'
@@ -136,7 +143,7 @@ def main(*args):
 
     command += [
         '-y', '-vf', '"premultiply=inplace=1,{}"'.format(filter_scale), '-q:v',
-        '5', '-frames:v', '1', '-update', 'true', path_output
+        '5', '-frames:v', '1', '-update', 'true', '"{}"'.format(path_output)
     ]
 
     # make sure folders exists
