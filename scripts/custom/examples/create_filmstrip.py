@@ -35,6 +35,7 @@ params:
 """
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -160,13 +161,20 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
 
 
 def _get_arguments_for_sequence(path_input, frame_number, frame_first):
-    frame = int(frame_first) + int(frame_number)
-    extension = Path(path_input).suffix
     # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
     # %04d defines the frame padding of 4 -> 0001
-    frame_padding = '%0{}d'.format(len(path_input.split('.')[-2]))
-    path_frame = '{}.{}{}'.format('.'.join(path_input.split('.')[:-2]),
-                                  frame_padding % frame, extension)
+    regex = r'(\d+|[%][0]\d[d]|[#]+)\.\w{2,}$'
+    match = re.search(regex, path_input)
+
+    if not match:
+        raise Exception('Failed to validate frame padding of source path')
+
+    value = match.groups()[0]
+    frame_padding = value if '%' in value else '%0{}d'.format(len(value))
+    frame = frame_padding % (int(frame_first) + int(frame_number))
+    stem_name = re.sub(regex, frame, Path(path_input).name)
+    path_frame = Path(path_input).with_stem(stem_name)
+
     # make sure to convert from linear to videospace
     return ['-i', '"{}"'.format(path_frame)]
 
@@ -212,11 +220,10 @@ def main(*args):
         Path(path_output).parent.mkdir()
 
     for stream_number, frame_number in enumerate(frame_numbers):
-        path_frame = Path('{}-{}.{}'.format(str(path_output), frame_number,
-                                            'jpg'))
+        path_frame = Path('{}-{}.{}'.format(path_output, frame_number, 'jpg'))
         paths_frames.append(path_frame)
         streams += '[{}:v]'.format(stream_number)
-        command += ['-i', str(path_frame)]
+        command += ['-i', '"{}"'.format(path_frame)]
         write_temp_frame_thumbnail(media_type, path, path_frame, frame_number,
                                    frame_width, height, frame_rate,
                                    frame_first)
