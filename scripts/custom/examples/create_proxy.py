@@ -32,6 +32,7 @@ params:
 """
 
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -115,23 +116,31 @@ def main(*args):
         return False
 
         # as an alternative you could loop an still image for 1 second
-        # command += ['-loop', '1', '-i', path, '-t', '1']
+        # command += ['-loop', '1', '-i', '"{}"'.format(path), '-t', '1']
 
     if media_type == 'movie':
         frame_rate = get_movie_frame_rate(path)
-        command += ['-i', path]
+        command += ['-i', '"{}"'.format(path)]
 
     if media_type == 'sequence':
-        extension = Path(path).suffix
         # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
         # %04d defines the frame padding of 4 -> 0001
-        frame_padding = '%0{}d'.format(len(path.split('.')[-2]))
-        path_string_format = '{}.{}{}'.format('.'.join(path.split('.')[:-2]),
-                                              frame_padding, extension)
+        regex = r'(\d+|[%][0]\d[d]|[#]+)\.\w{2,}$'
+        match = re.search(regex, path)
+
+        if not match:
+            raise Exception('Failed to validate frame padding of source path')
+
+        value = match.groups()[0]
+        frame_padding = value if '%' in value else '%0{}d'.format(len(value))
+        stem_name = re.sub(regex, frame_padding, Path(path).name)
+        path_string_format = Path(path).with_stem(stem_name)
+
         command += [
             '-start_number',
             str(frame_first), '-r',
-            str(frame_rate), '-f', 'image2', '-i', path_string_format
+            str(frame_rate), '-f', 'image2', '-i',
+            '"{}"'.format(path_string_format)
         ]
 
     timestamp_start = frames_to_timestamp(int(frame_first), frame_rate)
@@ -143,7 +152,7 @@ def main(*args):
         .format(width, height), '-vcodec', 'libx264', '-crf', '23', '-preset',
         'faster', '-tune', 'film', '-pix_fmt', 'yuv420p', '-framerate',
         str(frame_rate), '-timecode', timestamp_start, '-acodec', 'copy',
-        path_output
+        '"{}"'.format(path_output)
     ]
 
     # make sure folders exists
