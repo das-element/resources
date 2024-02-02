@@ -154,11 +154,11 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
     return True
 
 
-def _get_arguments_for_sequence(path_input, frame_number, frame_first):
+def _get_arguments_for_sequence(path, frame_number, frame_first):
     # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
     # %04d defines the frame padding of 4 -> 0001
     regex = r'(\d+|[%][0]\d[d]|[#]+)\.\w{2,}$'
-    match = re.search(regex, path_input)
+    match = re.search(regex, path)
 
     if not match:
         raise Exception('Failed to validate frame padding of source path')
@@ -166,22 +166,24 @@ def _get_arguments_for_sequence(path_input, frame_number, frame_first):
     value = match.groups()[0]
     frame_padding = value if '%' in value else '%0{}d'.format(len(value))
     frame = frame_padding % (int(frame_first) + int(frame_number))
-    stem_name = re.sub(regex, frame, Path(path_input).name)
-    path_frame = Path(path_input).with_stem(stem_name)
+
+    path = Path(path)
+    stem_name = re.sub(regex, frame, path.name)
+    path_frame = path.parent / (stem_name + path.suffix)
 
     # make sure to convert from linear to videospace
     return ['-i', '"{}"'.format(path_frame)]
 
 
-def _get_arguments_for_movie(path_input, frame, frame_rate):
+def _get_arguments_for_movie(path, frame, frame_rate):
     arguments = []
     timestamp = frames_to_timestamp(int(frame), frame_rate)
 
-    if not Path(path_input).suffix.lower() in ('.mkv', '.mp4', '.mxf'):
+    if not Path(path).suffix.lower() in ('.mkv', '.mp4', '.mxf'):
         arguments += ['-ignore_editlist', '1']
 
     arguments += [
-        '-ss', timestamp, '-noaccurate_seek', '-i', '"{}"'.format(path_input)
+        '-ss', timestamp, '-noaccurate_seek', '-i', '"{}"'.format(path)
     ]
     return arguments
 
