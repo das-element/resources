@@ -131,11 +131,13 @@ def main(*args):
         value = match.groups()[0]
         frame_padding = value if '%' in value else '%0{}d'.format(len(value))
         frame = frame_padding % frame_center
-        stem_name = re.sub(regex, frame, Path(path).name)
-        path_center_frame = Path(path).with_stem(stem_name)
+
+        path = Path(path)
+        stem_name = re.sub(regex, frame, path.name)
+        path_frame = path.parent / (stem_name + path.suffix)
 
         # make sure to convert from linear to videospace
-        command += ['-i', '"{}"'.format(path_center_frame)]
+        command += ['-i', '"{}"'.format(path_frame)]
 
     filter_scale = 'scale={}:{}:'.format(width, height)
     filter_scale += 'force_original_aspect_ratio=decrease,'
