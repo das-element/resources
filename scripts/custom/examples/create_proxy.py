@@ -133,8 +133,10 @@ def main(*args):
 
         value = match.groups()[0]
         frame_padding = value if '%' in value else '%0{}d'.format(len(value))
-        stem_name = re.sub(regex, frame_padding, Path(path).name)
-        path_string_format = Path(path).with_stem(stem_name)
+
+        path = Path(path)
+        stem_name = re.sub(regex, frame_padding, path.name)
+        path_string_format = path.parent / (stem_name + path.suffix)
 
         command += [
             '-start_number',
