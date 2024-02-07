@@ -93,7 +93,7 @@ def get_movie_frame_rate(path):
         'v:0', '-show_entries', 'stream=r_frame_rate', '"{}"'.format(path)
     ]
     command_string = ' '.join(command)
-    result = eval(os.popen(command_string).read())
+    result = eval(os.popen(command_string).read().lstrip('(').rstrip(',)'))
     frame_rate = round(result, 3)
     print('Movie frame rate: {}'.format(frame_rate))
     return frame_rate
