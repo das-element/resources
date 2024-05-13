@@ -7,7 +7,7 @@
 
 Define here some custom behaviors when an element from the asset library is dropped into Nuke
 
-Place this file somewhee in your .nuke folder and import it in 'menu.py'
+Place this file somewhere in your .nuke folder and import it in 'menu.py'
 
 Example (add this line to the menu.py):
 import nuke_custom_drop_handler
