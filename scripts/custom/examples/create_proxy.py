@@ -31,6 +31,7 @@ params:
 
 """
 
+import math
 import os
 import re
 import subprocess
@@ -74,6 +75,19 @@ def frames_to_timestamp(frames, frame_rate):
     f = value.split('.')[1]  # get millisecond
 
     return '%02d:%02d:%02d.%03s' % (h, m, s, f)
+
+
+def get_gop_size(frame_rate):
+    # adjust the GOP size to match the frame rate
+    # this ensures smooth dynamic scrubbing through the video
+
+    # convert the frame rate to an integer, rounding up
+    # example: 23.987 -> 24 or 59.94 -> 60
+    frame_rate = math.ceil(float(frame_rate))
+    # Define frame rate specific mappings
+    mappings = {24: 12, 25: 12, 30: 15, 60: 15, 120: 15}
+    # Return the GOP size based on specific mappings or default to 10
+    return mappings.get(frame_rate, 10)
 
 
 def get_movie_frame_rate(path):
@@ -146,6 +160,7 @@ def main(*args):
         ]
 
     timestamp_start = frames_to_timestamp(int(frame_first), frame_rate)
+    gop_size = get_gop_size(frame_rate)
 
     command += [
         '-y', '-r',
@@ -153,8 +168,8 @@ def main(*args):
         'premultiply=inplace=1,scale={0}:{1}:force_original_aspect_ratio=decrease,pad={0}:{1}:(ow-iw)/2:(oh-ih)/2'
         .format(width, height), '-vcodec', 'libx264', '-crf', '23', '-preset',
         'faster', '-tune', 'film', '-pix_fmt', 'yuv420p', '-framerate',
-        str(frame_rate), '-timecode', timestamp_start, '-acodec', 'copy',
-        '"{}"'.format(path_output)
+        str(frame_rate), '-timecode', timestamp_start, '-g',
+        str(gop_size), '-acodec', 'copy', '"{}"'.format(path_output)
     ]
 
     # make sure folders exists
