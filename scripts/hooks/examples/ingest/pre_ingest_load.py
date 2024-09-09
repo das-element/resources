@@ -36,7 +36,8 @@ def main(*args):
             'tags': ['fire', 'flame'],
             'colorspace': 'rec709',
             'mapping': 'copy & rename',
-            'metadata': {'key1': 'value1', 'key2': 'value2'}
+            'metadata': {'key1': 'value1', 'key2': 'value2'},
+            'additionals': [{'/path/to/some/file.mov': '/path/to/some/additional.exr', 'type': 'file', 'name': 'additional name'}]            
         }]
     '''
     items = args[0]
