@@ -132,6 +132,10 @@ def main(*args):
         # as an alternative you could loop an still image for 1 second
         # command += ['-loop', '1', '-i', '"{}"'.format(path), '-t', '1']
 
+    if media_type == 'generic':
+        print('Is generic media type - will not render filmstrip')
+        return False
+
     if media_type == 'movie':
         frame_rate = get_movie_frame_rate(path)
         command += ['-i', '"{}"'.format(path)]
