@@ -201,6 +201,10 @@ def main(*args):
         print('No sequence or movie file - will not render filmstrip')
         return False
 
+    if media_type == 'generic':
+        print('Is generic media type - will not render filmstrip')
+        return False
+
     paths_frames = []  # temporary file paths
 
     command = [EXECUTABLE_FFMPEG, '-y', '-vsync', '0']
