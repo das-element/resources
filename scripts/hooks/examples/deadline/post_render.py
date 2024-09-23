@@ -15,7 +15,7 @@ import sys
 import re
 
 
-def main(*args):
+def main(*args, logger=None):
     # args[0] is a list of all outputs from all the transcoding step items
     job_outputs = args[0]
     job_ids = []
