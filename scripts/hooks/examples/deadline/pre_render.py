@@ -15,7 +15,7 @@ If that is not provided the resolve would otherwise fail if you re-render the pr
 import sys
 
 
-def main(*args):
+def main(*args, logger=None):
     data = args[0]
 
     # make sure to set some value for the dependency.
