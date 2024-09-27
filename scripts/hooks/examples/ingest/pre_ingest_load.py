@@ -20,6 +20,16 @@ veh_awesomeCar
 import sys
 import re
 
+"""
+Example to load custom external Python code
+
+To make sure everything updates each time this hook file gets exectured see the example import:
+
+import some_module # Import your external modules
+recursive_reload(some_module) # Recursively reload the modules
+from some_module import some_function # Import the necessary functions after reloading
+"""
+
 # search for these tags in the file paths and create them as tags
 TAGS = ['assets', 'environments', 'hdri', 'photogrammetry', 'texture']
 
