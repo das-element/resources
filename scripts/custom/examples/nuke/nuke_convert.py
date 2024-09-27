@@ -111,7 +111,7 @@ if not os.path.exists(path_script_directory):
     os.makedirs(path_script_directory)
 
 # save the job nuke script
-nuke.scriptSaveAs(path_script_job)
+nuke.scriptSaveAs(path_script_job, overwrite=True)
 
 # render the job
 nuke.execute(node_write, frame_first, frame_last, continueOnError=False)
