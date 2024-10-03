@@ -219,7 +219,7 @@ def main(*args):
     streams = ''
 
     height = 270  # set height of filmstrip
-    number_of_frames = 12  # the number of frames that the filmstrip has
+    number_of_frames = 24  # the number of frames that the filmstrip has
     frame_width = int((16. / 9.) * float(height))  # image has 16:9 image ratio
     frame_numbers = get_frame_numbers(frame_first, frame_last,
                                       number_of_frames)
