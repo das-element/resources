@@ -82,10 +82,10 @@ def main(*args):
         item['metadata'] = {'key1': 'value1', 'key2': 'value2'}
 
         # custom thumbnail
-        item['path_thumbnail'] = '/path/to/custom/thumbnail.jpg'
+        # item['path_thumbnail'] = '/path/to/custom/thumbnail.jpg'
 
         # custom proxy file
-        item['path_proxy'] = '/path/to/custom/proxy.mov'
+        # item['path_proxy'] = '/path/to/custom/proxy.mov'
 
         result.append(item)
     return result
