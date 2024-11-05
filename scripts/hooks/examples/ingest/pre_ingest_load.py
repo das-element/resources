@@ -34,7 +34,7 @@ from some_module import some_function # Import the necessary functions after rel
 TAGS = ['assets', 'environments', 'hdri', 'photogrammetry', 'texture']
 
 
-def main(*args):
+def main(*args, logger=None):
     '''
         args will be a List of Dicts:
 
