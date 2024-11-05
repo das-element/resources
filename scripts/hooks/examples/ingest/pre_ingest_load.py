@@ -56,16 +56,18 @@ def main(*args, logger=None):
     for item in items:
         path = item.get('path', '').replace('\\', '/')
         path_items = path.split('/')
+        item['tags'] = item.get('tags', [])
+
         for path_item in path_items:
             # search for keywords in file path
             if path_item in TAGS:
-                item.get('tags', []).append(path_item)
+                item['tags'].append(path_item)
 
             # example regular expression to search for a pattern in the file path
             regex_asset = r'(prp|env|veh_\w*)'
             match = re.search(regex_asset, path_item)
             if match:
-                item.get('tags', []).append(path_item)
+                item['tags'].append(path_item)
 
         if item.get('tags'):
             # set last tag as the category
