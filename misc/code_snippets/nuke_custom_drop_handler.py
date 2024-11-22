@@ -7,14 +7,18 @@
 
 Define here some custom behaviors when an element from the asset library is dropped into Nuke
 
-Place this file somewhere in your .nuke folder and import it in 'menu.py'
+Place this file somewhee in your .nuke folder and import it in 'menu.py'
 
 Example (add this line to the menu.py):
 import nuke_custom_drop_handler
 """
 
+import json
+import pprint
+
 import nuke
 import nukescripts
+
 
 # check if the file(s) dropped belongs to the elements library
 # update this here to your library root path
@@ -65,6 +69,18 @@ def file_handler(path):
 
 
 def custom_drop_handler(mimeType, value):
+    if value.startswith("\[{"):
+        print("dropped json data")
+
+        # for some reason json data escapes only the open squared brackets 
+        value = value.replace('\[', '[')
+
+        data = json.loads(value)
+        pprint.pprint(data)
+        
+        # drop first dragged item
+        return file_handler(data[0]['path'])
+
     # keep default copy & paste behavior inside Nuke
     if value.startswith('set cut_paste_input'):
         return False
