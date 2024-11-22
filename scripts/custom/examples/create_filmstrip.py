@@ -185,7 +185,9 @@ def _get_arguments_for_movie(path, frame, frame_rate):
     arguments = []
     timestamp = frames_to_timestamp(int(frame), frame_rate)
 
-    if not Path(path).suffix.lower() in ('.avi', '.mkv', '.mp4', '.mxf'):
+    # the flag "ignore_editlist" is only available to certain movie files
+    if not Path(path).suffix.lower() in ('.avi', '.flv', '.mkv', '.mpg',
+                                            '.mpeg', '.mp4', '.mxf'):
         arguments += ['-ignore_editlist', '1']
 
     arguments += [
