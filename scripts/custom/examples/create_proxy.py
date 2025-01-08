@@ -169,7 +169,7 @@ def main(*args):
     command += [
         '-y', '-r',
         str(frame_rate), '-vf',
-        'premultiply=inplace=1,scale={0}:{1}:force_original_aspect_ratio=decrease,pad={0}:{1}:(ow-iw)/2:(oh-ih)/2'
+        'format=yuv420p,premultiply=inplace=1,scale={0}:{1}:force_original_aspect_ratio=decrease,pad={0}:{1}:(ow-iw)/2:(oh-ih)/2'
         .format(width, height), '-vcodec', 'libx264', '-crf', '23', '-preset',
         'faster', '-tune', 'film', '-pix_fmt', 'yuv420p', '-framerate',
         str(frame_rate), '-timecode', timestamp_start, '-g',
