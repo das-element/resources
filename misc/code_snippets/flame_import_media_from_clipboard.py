@@ -12,6 +12,9 @@ How to use:
 In Das Element, selected an element and press Ctrl+c (macOS: cmd+c) to copy the file path to the clipboard
 In Flame, exectue this python script to import the file into the current project.
 It will be imported to a library named "DasElement Import". Can be changed in the IMPORT_REEL_NAME variable.
+
+Note:
+For Linux make sure xclip is installed (sudo yum install xclip).
 """
 
 import flame
