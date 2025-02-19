@@ -52,7 +52,7 @@ Example output format for Shotgrid:
 import sys
 
 
-def main(*args):
+def main(*args, logger=None):
     # args will be a List of Dicts:
     items = args[0]
     result = []
