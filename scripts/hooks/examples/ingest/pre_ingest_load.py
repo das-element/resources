@@ -84,6 +84,9 @@ def main(*args, logger=None):
         # add custom metadata
         item['metadata'] = {'key1': 'value1', 'key2': 'value2'}
 
+        # set media type of asset
+        # item['media_type'] = 'image'
+
         # custom thumbnail
         # item['path_thumbnail'] = '/path/to/custom/thumbnail.jpg'
 
