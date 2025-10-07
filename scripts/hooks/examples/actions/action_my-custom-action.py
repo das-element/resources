@@ -6,10 +6,20 @@
     \__,_/\__,_/____/   \___/_/\___/_/ /_/ /_/\___/_/ /_/\__/
 
 
-Script that gets run before deleting an element.
-Data is the element entity that is about to be deleted. No result will be returned.
+Action hook are custom scripts that can be triggerd from the GUI.
+Place the action file in the same folder as the other hooks.
+Must follow file naming convention: action_{some-name}.py
 
-Example output from das element:
+The button can be customized by using METADATA:
+
+name        : text of the button
+description : tooltip when hover over button
+icon        : path or URL to custom icon
+color       : hex color code, e.g. '#008000' or 'green'
+order       : numeric value to order the action buttons
+
+
+Example data structure:
 
 {
     'uuuid': '01859093927b96d3a5131f9cd42d8ed7',
@@ -53,10 +63,10 @@ Example output from das element:
 """
 
 METADATA = {
-    'name': 'Custom Action', # display name
+    'name': 'Custom Action', # text of the button
     'description': 'A custom action to process selected items', # tooltip when hover over button
-    'icon': '/path/to/icon.png', # path  or URL to custom icon
-    'color': '#008000', # hex colore code, e.g. '#008000' or 'green'
+    'icon': '/path/to/icon.png', # path or URL to custom icon
+    'color': '#008000', # hex color code, e.g. '#008000' or 'green'
     'order': 1 # numeric value to order the action buttons
 }
 
