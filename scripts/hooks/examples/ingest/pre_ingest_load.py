@@ -48,7 +48,7 @@ def main(*args, logger=None):
             'colorspace': 'rec709',
             'mapping': 'copy & rename',
             'metadata': {'key1': 'value1', 'key2': 'value2'},
-            'additionals': [{'path': '/path/to/some/additional.exr', 'type': 'file', 'name': 'additional name'}]            
+            'additionals': [{'path': '/path/to/some/additional.exr', 'type': 'file', 'name': 'additional name', 'media_type': 'image', 'colorspace': 'linear'}]            
         }]
     '''
     items = args[0]
