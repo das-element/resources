@@ -297,10 +297,9 @@ def main(*args):
         returncode, output, error = execute_command(command_batch)
 
         if returncode != 0:
-            print(returncode)
-            print(output)
-            print(error)
-            raise Exception("Oh no .... something went wrong!")
+            error_lines = [line for line in str(error).splitlines() if line.strip()]
+            last_error_line = error_lines[-1] if error_lines else "Unknown error"
+            raise Exception(f"Command failed with exit code {returncode}: {last_error_line}")
 
         stream_id = batch_id - 1  # the stream_id needs to start at 0
         streams += '[{}:v]'.format(stream_id)
@@ -335,10 +334,9 @@ def main(*args):
             print(error_msg)
 
     if returncode != 0:
-        print(returncode)
-        print(output)
-        print(error)
-        raise Exception("Oh no .... something went wrong!")
+        error_lines = [line for line in str(error).splitlines() if line.strip()]
+        last_error_line = error_lines[-1] if error_lines else "Unknown error"
+        raise Exception(f"Command failed with exit code {returncode}: {last_error_line}")
 
     return returncode
 

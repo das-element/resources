@@ -71,14 +71,18 @@ def main(*args):
         has_error = copy_file_sequence(path_source, path_output, frame_first,
                                        frame_last)
         if has_error:
-            raise Exception("Oh no ... something went wrong!")
+            error = f"Failed to copy sequence from {path_source} to {path_output}"
+            error_lines = [line for line in error.splitlines() if line.strip()]
+            last_error_line = error_lines[-1] if error_lines else "Unknown error"
+            raise Exception(f"Command failed with exit code 1: {last_error_line}")
         return True
 
     # check if the source file path exists
     if not Path(path_source).exists():
-        print('Source file does not exist: {}'.format(path_source))
-        print('Failed to copy file: {}'.format(path_output))
-        raise Exception("Oh no ... something went wrong!")
+        error = f"Source file does not exist: {path_source}\nFailed to copy file: {path_output}"
+        error_lines = [line for line in error.splitlines() if line.strip()]
+        last_error_line = error_lines[-1] if error_lines else "Unknown error"
+        raise Exception(f"Command failed with exit code 1: {last_error_line}")
 
     shutil.copy2(path_source, path_output)
     return True
