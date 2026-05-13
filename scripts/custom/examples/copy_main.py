@@ -67,7 +67,7 @@ def main(*args):
     print(args[0])
     path_source, path_output, media_type, frame_first, frame_last = args[0]
 
-    if media_type == 'sequence':
+    if media_type in ('sequence', 'sequence-udim'):
         has_error = copy_file_sequence(path_source, path_output, frame_first,
                                        frame_last)
         if has_error:

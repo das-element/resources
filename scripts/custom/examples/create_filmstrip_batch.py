@@ -132,7 +132,7 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
 
     command = [EXECUTABLE_FFMPEG, '-y', '-nostats', '-loglevel', 'warning']
 
-    if media_type == 'sequence':
+    if media_type in ('sequence', 'sequence-udim'):
         command += _get_arguments_for_sequence(path_input, frame_number,
                                                frame_first)
     else:
@@ -180,7 +180,7 @@ def _get_arguments_for_movie(path, frame, frame_rate):
     timestamp = frames_to_timestamp(int(frame), frame_rate)
 
     # the flag "ignore_editlist" is only available to certain movie files
-    if not Path(path).suffix.lower() in ('.avi', '.flv', '.mkv', '.mpg',
+    if Path(path).suffix.lower() not in ('.avi', '.flv', '.mkv', '.mpg',
                                             '.mpeg', '.mp4', '.mxf'):
         arguments += ['-ignore_editlist', '1']
 

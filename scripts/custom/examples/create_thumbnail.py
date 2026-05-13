@@ -119,7 +119,7 @@ def main(*args):
         timestamp = frames_to_timestamp(frame_center, frame_rate)
         command += ['-i', '"{}"'.format(path), '-ss', timestamp]
 
-    if media_type == 'sequence':
+    if media_type in ('sequence', 'sequence-udim'):
         # rudimentary frame padding validation - we assume here that the frame counter is just before the file extension
         # %04d defines the frame padding of 4 -> 0001
         regex = r'(\d+|[%][0]\d[d]|[#]+)\.\w{2,}$'
