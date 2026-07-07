@@ -32,10 +32,27 @@ params:
 
 """
 
-import sys
 import shutil
-from fileseq import FileSequence, findSequenceOnDisk
+import sys
 from pathlib import Path
+
+from fileseq import FileSequence, findSequenceOnDisk
+
+
+def copy_file_data(src, dst):
+    # copy the file contents and (best-effort) its metadata.
+    #
+    # this behaves like shutil.copy2() but tolerates the destination not
+    # allowing metadata changes. on servers where permissions are managed by
+    # ACL (observed on macOS/Linux network shares), copying the file contents
+    # succeeds but the subsequent chmod() done by copystat() raises
+    # PermissionError. in that case the file is already copied correctly, so
+    # we ignore the metadata failure instead of failing the copy.
+    shutil.copyfile(str(src), str(dst))
+    try:
+        shutil.copystat(str(src), str(dst))
+    except (PermissionError, OSError):
+        pass
 
 
 def copy_file_sequence(source, output, frame_first, frame_last):
@@ -58,7 +75,7 @@ def copy_file_sequence(source, output, frame_first, frame_last):
             print('Source file does not exist: {}'.format(item[0]))
             print('Failed to copy file: {}'.format(item[1]))
             continue
-        shutil.copy2(str(item[0]), str(item[1]))
+        copy_file_data(item[0], item[1])
 
     return has_error
 
@@ -68,23 +85,24 @@ def main(*args):
     path_source, path_output, media_type, frame_first, frame_last = args[0]
 
     if media_type in ('sequence', 'sequence-udim'):
-        has_error = copy_file_sequence(path_source, path_output, frame_first,
-                                       frame_last)
+        has_error = copy_file_sequence(
+            path_source, path_output, frame_first, frame_last
+        )
         if has_error:
-            error = f"Failed to copy sequence from {path_source} to {path_output}"
+            error = f'Failed to copy sequence from {path_source} to {path_output}'
             error_lines = [line for line in error.splitlines() if line.strip()]
-            last_error_line = error_lines[-1] if error_lines else "Unknown error"
-            raise Exception(f"Command failed with exit code 1: {last_error_line}")
+            last_error_line = error_lines[-1] if error_lines else 'Unknown error'
+            raise Exception(f'Command failed with exit code 1: {last_error_line}')
         return True
 
     # check if the source file path exists
     if not Path(path_source).exists():
-        error = f"Source file does not exist: {path_source}\nFailed to copy file: {path_output}"
+        error = f'Source file does not exist: {path_source}\nFailed to copy file: {path_output}'
         error_lines = [line for line in error.splitlines() if line.strip()]
-        last_error_line = error_lines[-1] if error_lines else "Unknown error"
-        raise Exception(f"Command failed with exit code 1: {last_error_line}")
+        last_error_line = error_lines[-1] if error_lines else 'Unknown error'
+        raise Exception(f'Command failed with exit code 1: {last_error_line}')
 
-    shutil.copy2(path_source, path_output)
+    copy_file_data(path_source, path_output)
     return True
 
 
