@@ -38,6 +38,16 @@ from fileseq import FileSequence, findSequenceOnDisk
 from pathlib import Path
 
 
+def copy_file_data(src, dst):
+    # Copy file contents first; metadata changes may be rejected by
+    # ACL-managed destinations such as macOS/Linux network shares.
+    shutil.copyfile(str(src), str(dst))
+    try:
+        shutil.copystat(str(src), str(dst))
+    except (PermissionError, OSError):
+        pass
+
+
 def copy_file_sequence(source, output, frame_first, frame_last):
     # get all source file paths
     source_files = [Path(path) for path in list(findSequenceOnDisk(source))]
@@ -58,7 +68,7 @@ def copy_file_sequence(source, output, frame_first, frame_last):
             print('Source file does not exist: {}'.format(item[0]))
             print('Failed to copy file: {}'.format(item[1]))
             continue
-        shutil.copy2(str(item[0]), str(item[1]))
+        copy_file_data(item[0], item[1])
 
     return has_error
 
@@ -84,7 +94,7 @@ def main(*args):
         last_error_line = error_lines[-1] if error_lines else "Unknown error"
         raise Exception(f"Command failed with exit code 1: {last_error_line}")
 
-    shutil.copy2(path_source, path_output)
+    copy_file_data(path_source, path_output)
     return True
 
 
