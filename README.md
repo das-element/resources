@@ -1,28 +1,40 @@
-# resources
+# das element resources
 
-Useful example scripts and python hooks for customization of **das element**
+Useful example scripts and Python hooks for customizing [**das element**](https://das-element.com).
 
+> Browse the full [das element documentation](https://docu.das-element.com) for setup instructions, configuration details, and API references.
 
-Check out the documentation page for more information: [https://docu.das-element.com](https://docu.das-element.com)
+## Contents
 
+- [Transcoding examples and templates](#transcoding-examples-and-templates)
+- [Python hooks](#python-hooks)
 
-&nbsp;
+## Transcoding examples and templates
 
+Ready-to-use examples for proxy generation and Nuke integrations:
 
-### Transcoding examples and templates
+| Resource | Description |
+| --- | --- |
+| [Proxy generation scripts](https://github.com/das-element/resources/tree/main/scripts/custom/examples) | Example scripts for creating proxies and customizing transcoding workflows. |
+| [Foundry Nuke templates](https://github.com/das-element/resources/tree/main/scripts/custom/examples/nuke) | Example templates for integrating **das element** with The Foundry Nuke. |
 
-[Example scripts for proxy generation](https://github.com/das-element/resources/tree/main/scripts/custom/examples)
+## Python hooks
 
-[Examples templates for The Foundry Nuke](https://github.com/das-element/resources/tree/main/scripts/custom/examples/nuke)
+Example hooks for extending ingest, render submission, and metadata workflows:
 
-&nbsp;
----
-&nbsp;
+| Resource | Description |
+| --- | --- |
+| [Ingest tagging](https://github.com/das-element/resources/tree/main/scripts/hooks/examples/ingest) | Automatically create tags from a folder structure. |
+| [AWS Deadline submission](https://github.com/das-element/resources/tree/main/scripts/hooks/examples/deadline) | Retrieve job dependencies when submitting jobs to AWS Deadline. |
+| [Autodesk ShotGrid export](https://github.com/das-element/resources/tree/main/scripts/hooks/examples/shotgrid) | Export data as a CSV for use with Autodesk ShotGrid. |
 
-### Python Hooks
+## Getting started
 
-[Automatically create tags from the folder structure](https://github.com/das-element/resources/tree/main/scripts/hooks/examples/ingest)
+1. Choose an example from the sections above.
+2. Review the example's README and source code.
+3. Copy or adapt the script for your **das element** workflow.
+4. Refer to the [documentation](https://docu.das-element.com) for configuration and integration details.
 
-[AWS Deadline submission hook to get the job dependency](https://github.com/das-element/resources/tree/main/scripts/hooks/examples/deadline)
+## Contributing
 
-[Export data as a CSV to Autodesk Shotgrid](https://github.com/das-element/resources/tree/main/scripts/hooks/examples/shotgrid)
+Improvements and additional examples are welcome. Please open an issue or pull request with a clear description of the use case and any required setup.
