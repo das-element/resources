@@ -96,8 +96,9 @@ node_write['file'].setValue(path_output)
 
 # set the time offset
 node_timeoffset = nuke.toNode('timeoffset')
-node_timeoffset['time_offset'].setExpression('%s-[value [topnode].first]' %
-                                             default_first_frame)
+node_timeoffset['time_offset'].setExpression(
+    '%s-[value [topnode].first]' % default_first_frame
+)
 
 # save nuke file in a folder called 'jobs' with the timestamp in the file name
 # /some/path/jobs/2021-11-06_11-58-17_nuke_convert_lin2lin.nk

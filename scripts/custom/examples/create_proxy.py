@@ -40,17 +40,17 @@ from pathlib import Path
 
 CURRENT_OS = sys.platform
 
-if CURRENT_OS in ("linux", "linux2"):
+if CURRENT_OS in ('linux', 'linux2'):
     EXECUTABLE_FFMPEG = '/usr/bin/ffmpeg'
     EXECUTABLE_FFPROBE = '/usr/bin/ffprobe'
-elif CURRENT_OS == "darwin":
+elif CURRENT_OS == 'darwin':
     EXECUTABLE_FFMPEG = '/usr/bin/ffmpeg'
     EXECUTABLE_FFPROBE = '/usr/bin/ffprobe'
-elif CURRENT_OS in ("win32", "win64"):
+elif CURRENT_OS in ('win32', 'win64'):
     EXECUTABLE_FFMPEG = 'C:/ffmpeg/bin/ffmpeg.exe'
     EXECUTABLE_FFPROBE = 'C:/ffmpeg/bin/ffprobe.exe'
 else:
-    raise Exception("Unknown operating system: {}".format(CURRENT_OS))
+    raise Exception('Unknown operating system: {}'.format(CURRENT_OS))
 
 
 def frames_to_timestamp(frames, frame_rate):
@@ -92,8 +92,16 @@ def get_gop_size(frame_rate):
 
 def get_movie_frame_rate(path):
     command = [
-        EXECUTABLE_FFPROBE, '-v', '0', '-of', 'csv=p=0', '-select_streams',
-        'v:0', '-show_entries', 'stream=r_frame_rate', '"{}"'.format(path)
+        EXECUTABLE_FFPROBE,
+        '-v',
+        '0',
+        '-of',
+        'csv=p=0',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream=r_frame_rate',
+        '"{}"'.format(path),
     ]
     command_string = ' '.join(command)
     result = eval(os.popen(command_string).read().lstrip('(').rstrip(',)'))
@@ -106,9 +114,7 @@ def execute_command(command):
     command_as_string = ' '.join(command)
     print(command_as_string)
 
-    process = subprocess.run(command_as_string,
-                             capture_output=True,
-                             shell=True)
+    process = subprocess.run(command_as_string, capture_output=True, shell=True)
 
     returncode = process.returncode
     output = process.stdout.decode('utf8', 'ignore').strip('\n')
@@ -158,22 +164,45 @@ def main(*args):
 
         command += [
             '-start_number',
-            str(frame_first), '-r',
-            str(frame_rate), '-f', 'image2', '-i',
-            '"{}"'.format(path_string_format)
+            str(frame_first),
+            '-r',
+            str(frame_rate),
+            '-f',
+            'image2',
+            '-i',
+            '"{}"'.format(path_string_format),
         ]
 
     timestamp_start = frames_to_timestamp(int(frame_first), frame_rate)
     gop_size = get_gop_size(frame_rate)
 
     command += [
-        '-y', '-r',
-        str(frame_rate), '-vf',
-        'format=yuv420p,premultiply=inplace=1,scale={0}:{1}:force_original_aspect_ratio=decrease,pad={0}:{1}:(ow-iw)/2:(oh-ih)/2'
-        .format(width, height), '-vcodec', 'libx264', '-crf', '23', '-preset',
-        'faster', '-tune', 'film', '-pix_fmt', 'yuv420p', '-framerate',
-        str(frame_rate), '-timecode', timestamp_start, '-g',
-        str(gop_size), '-acodec', 'copy', '"{}"'.format(path_output)
+        '-y',
+        '-r',
+        str(frame_rate),
+        '-vf',
+        'format=yuv420p,premultiply=inplace=1,scale={0}:{1}:force_original_aspect_ratio=decrease,pad={0}:{1}:(ow-iw)/2:(oh-ih)/2'.format(
+            width, height
+        ),
+        '-vcodec',
+        'libx264',
+        '-crf',
+        '23',
+        '-preset',
+        'faster',
+        '-tune',
+        'film',
+        '-pix_fmt',
+        'yuv420p',
+        '-framerate',
+        str(frame_rate),
+        '-timecode',
+        timestamp_start,
+        '-g',
+        str(gop_size),
+        '-acodec',
+        'copy',
+        '"{}"'.format(path_output),
     ]
 
     # make sure folders exists
@@ -185,8 +214,10 @@ def main(*args):
 
     if returncode != 0:
         error_lines = [line for line in str(error).splitlines() if line.strip()]
-        last_error_line = error_lines[-1] if error_lines else "Unknown error"
-        raise Exception(f"Command failed with exit code {returncode}: {last_error_line}")
+        last_error_line = error_lines[-1] if error_lines else 'Unknown error'
+        raise Exception(
+            f'Command failed with exit code {returncode}: {last_error_line}'
+        )
 
     return returncode
 

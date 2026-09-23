@@ -50,17 +50,17 @@ from pathlib import Path
 
 CURRENT_OS = sys.platform
 
-if CURRENT_OS in ("linux", "linux2"):
+if CURRENT_OS in ('linux', 'linux2'):
     EXECUTABLE_FFMPEG = '/usr/bin/ffmpeg'
     EXECUTABLE_FFPROBE = '/usr/bin/ffprobe'
-elif CURRENT_OS == "darwin":
+elif CURRENT_OS == 'darwin':
     EXECUTABLE_FFMPEG = '/usr/bin/ffmpeg'
     EXECUTABLE_FFPROBE = '/usr/bin/ffprobe'
-elif CURRENT_OS in ("win32", "win64"):
+elif CURRENT_OS in ('win32', 'win64'):
     EXECUTABLE_FFMPEG = 'C:/ffmpeg/bin/ffmpeg.exe'
     EXECUTABLE_FFPROBE = 'C:/ffmpeg/bin/ffprobe.exe'
 else:
-    raise Exception("Unknown operating system: {}".format(CURRENT_OS))
+    raise Exception('Unknown operating system: {}'.format(CURRENT_OS))
 
 
 def frames_to_timestamp(frames, frame_rate):
@@ -89,8 +89,16 @@ def frames_to_timestamp(frames, frame_rate):
 
 def get_movie_frame_rate(path):
     command = [
-        EXECUTABLE_FFPROBE, '-v', '0', '-of', 'csv=p=0', '-select_streams',
-        'v:0', '-show_entries', 'stream=r_frame_rate', '"{}"'.format(path)
+        EXECUTABLE_FFPROBE,
+        '-v',
+        '0',
+        '-of',
+        'csv=p=0',
+        '-select_streams',
+        'v:0',
+        '-show_entries',
+        'stream=r_frame_rate',
+        '"{}"'.format(path),
     ]
     command_string = ' '.join(command)
     result = eval(os.popen(command_string).read().lstrip('(').rstrip(',)'))
@@ -121,9 +129,16 @@ def get_frame_numbers(frame_first, frame_last, number_of_frames):
     return frame_numbers[:number_of_frames]
 
 
-def write_temp_frame_thumbnail(media_type, path_input, path_output,
-                               frame_number, width, height, frame_rate,
-                               frame_first):
+def write_temp_frame_thumbnail(
+    media_type,
+    path_input,
+    path_output,
+    frame_number,
+    width,
+    height,
+    frame_rate,
+    frame_first,
+):
 
     # scale and add letterbox if needed
     scale = 'scale={}:{}:'.format(width, height)
@@ -133,15 +148,18 @@ def write_temp_frame_thumbnail(media_type, path_input, path_output,
     command = [EXECUTABLE_FFMPEG, '-y', '-nostats', '-loglevel', 'warning']
 
     if media_type in ('sequence', 'sequence-udim'):
-        command += _get_arguments_for_sequence(path_input, frame_number,
-                                               frame_first)
+        command += _get_arguments_for_sequence(path_input, frame_number, frame_first)
     else:
-        command += _get_arguments_for_movie(path_input, frame_number,
-                                            frame_rate)
+        command += _get_arguments_for_movie(path_input, frame_number, frame_rate)
 
     command += [
-        '-vf', '"premultiply=inplace=1,{}"'.format(scale), '-q:v', '5',
-        '-frames:v', '1', '"{}"'.format(path_output)
+        '-vf',
+        '"premultiply=inplace=1,{}"'.format(scale),
+        '-q:v',
+        '5',
+        '-frames:v',
+        '1',
+        '"{}"'.format(path_output),
     ]
 
     returncode, output, error = execute_command(command)
@@ -180,13 +198,18 @@ def _get_arguments_for_movie(path, frame, frame_rate):
     timestamp = frames_to_timestamp(int(frame), frame_rate)
 
     # the flag "ignore_editlist" is only available to certain movie files
-    if Path(path).suffix.lower() not in ('.avi', '.flv', '.mkv', '.mpg',
-                                            '.mpeg', '.mp4', '.mxf'):
+    if Path(path).suffix.lower() not in (
+        '.avi',
+        '.flv',
+        '.mkv',
+        '.mpg',
+        '.mpeg',
+        '.mp4',
+        '.mxf',
+    ):
         arguments += ['-ignore_editlist', '1']
 
-    arguments += [
-        '-ss', timestamp, '-noaccurate_seek', '-i', '"{}"'.format(path)
-    ]
+    arguments += ['-ss', timestamp, '-noaccurate_seek', '-i', '"{}"'.format(path)]
     return arguments
 
 
@@ -194,9 +217,7 @@ def execute_command(command):
     command_as_string = ' '.join(command)
     print(command_as_string)
 
-    process = subprocess.run(command_as_string,
-                             capture_output=True,
-                             shell=True)
+    process = subprocess.run(command_as_string, capture_output=True, shell=True)
 
     returncode = process.returncode
     output = process.stdout.decode('utf8', 'ignore').strip('\n')
@@ -222,9 +243,8 @@ def main(*args):
 
     height = 270  # set height of filmstrip
     number_of_frames = 24  # the number of frames that the filmstrip has
-    frame_width = int((16. / 9.) * float(height))  # image has 16:9 image ratio
-    frame_numbers = get_frame_numbers(frame_first, frame_last,
-                                      number_of_frames)
+    frame_width = int((16.0 / 9.0) * float(height))  # image has 16:9 image ratio
+    frame_numbers = get_frame_numbers(frame_first, frame_last, number_of_frames)
 
     if media_type == 'movie':
         frame_rate = get_movie_frame_rate(path)
@@ -263,9 +283,16 @@ def main(*args):
         batches[batch_number]['frames'] += 1
         stream_counter += 1
 
-        write_temp_frame_thumbnail(media_type, path, path_frame, frame_number,
-                                   frame_width, height, frame_rate,
-                                   frame_first)
+        write_temp_frame_thumbnail(
+            media_type,
+            path,
+            path_frame,
+            frame_number,
+            frame_width,
+            height,
+            frame_rate,
+            frame_first,
+        )
 
     # render batches of thumbnails
     command = [EXECUTABLE_FFMPEG, '-y', '-vsync', '0']
@@ -280,26 +307,31 @@ def main(*args):
 
         # if a clip is shorter than the frames, make sure to add blank frames
         padding = 'pad={}:{}:0:0:#161a21'.format(
-            number_of_batch_frames * frame_width, height)
+            number_of_batch_frames * frame_width, height
+        )
 
         if len(frame_numbers) > 1:
             # if a movie file has only one frame it will not work
             # for hstack a minimum of 2 frames is required
-            streams_batch += 'hstack=inputs=' + str(
-                number_of_batch_frames) + ','
+            streams_batch += 'hstack=inputs=' + str(number_of_batch_frames) + ','
 
         streams_batch += padding + '[v]'
         command_batch += [
-            '-filter_complex', '"{}"'.format(streams_batch), '-map', '[v]',
-            '"{}"'.format(path_output_batch)
+            '-filter_complex',
+            '"{}"'.format(streams_batch),
+            '-map',
+            '[v]',
+            '"{}"'.format(path_output_batch),
         ]
 
         returncode, output, error = execute_command(command_batch)
 
         if returncode != 0:
             error_lines = [line for line in str(error).splitlines() if line.strip()]
-            last_error_line = error_lines[-1] if error_lines else "Unknown error"
-            raise Exception(f"Command failed with exit code {returncode}: {last_error_line}")
+            last_error_line = error_lines[-1] if error_lines else 'Unknown error'
+            raise Exception(
+                f'Command failed with exit code {returncode}: {last_error_line}'
+            )
 
         stream_id = batch_id - 1  # the stream_id needs to start at 0
         streams += '[{}:v]'.format(stream_id)
@@ -310,8 +342,7 @@ def main(*args):
     # finally stitch together the batches to the final filmstrip
 
     # if a clip is shorter than the frames, make sure to add blank frames
-    padding = 'pad={}:{}:0:0:#161a21'.format(number_of_frames * frame_width,
-                                             height)
+    padding = 'pad={}:{}:0:0:#161a21'.format(number_of_frames * frame_width, height)
 
     if len(batch_output_paths) > 1:
         # if a movie file has only one frame it will not work
@@ -320,8 +351,11 @@ def main(*args):
 
     streams += padding + '[v]'
     command += [
-        '-filter_complex', '"{}"'.format(streams), '-map', '[v]',
-        '"{}"'.format(path_output)
+        '-filter_complex',
+        '"{}"'.format(streams),
+        '-map',
+        '[v]',
+        '"{}"'.format(path_output),
     ]
 
     returncode, output, error = execute_command(command)
@@ -335,8 +369,10 @@ def main(*args):
 
     if returncode != 0:
         error_lines = [line for line in str(error).splitlines() if line.strip()]
-        last_error_line = error_lines[-1] if error_lines else "Unknown error"
-        raise Exception(f"Command failed with exit code {returncode}: {last_error_line}")
+        last_error_line = error_lines[-1] if error_lines else 'Unknown error'
+        raise Exception(
+            f'Command failed with exit code {returncode}: {last_error_line}'
+        )
 
     return returncode
 

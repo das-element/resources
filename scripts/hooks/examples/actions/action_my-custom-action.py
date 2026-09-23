@@ -63,15 +63,15 @@ Example data structure:
 """
 
 METADATA = {
-    'name': 'Custom Action', # text of the button
-    'description': 'A custom action to process selected items', # tooltip when hover over button
-    'icon': '/path/to/icon.png', # path or URL to custom icon
-    'color': '#008000', # hex color code, e.g. '#008000' or 'green'
-    'order': 1 # numeric value to order the action buttons
+    'name': 'Custom Action',  # text of the button
+    'description': 'A custom action to process selected items',  # tooltip when hover over button
+    'icon': '/path/to/icon.png',  # path or URL to custom icon
+    'color': '#008000',  # hex color code, e.g. '#008000' or 'green'
+    'order': 1,  # numeric value to order the action buttons
 }
 
-import sys
 import os
+import sys
 
 
 def main(*args, logger=None):
@@ -83,8 +83,8 @@ def main(*args, logger=None):
         logger.info(element_path)
 
     return {
-        'status': 'success', # 'error'
-        'message': 'Custom action executed successfully'
+        'status': 'success',  # 'error'
+        'message': 'Custom action executed successfully',
     }
 
 

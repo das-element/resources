@@ -61,14 +61,14 @@ def main(*args, logger=None):
     for item in items:
         frame_range = '{}-{}'.format(item['frame_first'], item['frame_last'])
         sg_item = {
-            "Version Name": item['name'],
-            "Frame Count": item['frame_count'],
-            "First Frame": item['frame_first'],
-            "Last Frame": item['frame_last'],
-            "Frame Rate": item['frame_rate'],
-            "Frame Range": frame_range,
-            "Path to Frames": item['path'],
-            "Tags": item['tags'].replace(',', ', '),
+            'Version Name': item['name'],
+            'Frame Count': item['frame_count'],
+            'First Frame': item['frame_first'],
+            'Last Frame': item['frame_last'],
+            'Frame Rate': item['frame_rate'],
+            'Frame Range': frame_range,
+            'Path to Frames': item['path'],
+            'Tags': item['tags'].replace(',', ', '),
         }
         result.append(sg_item)
     return result
