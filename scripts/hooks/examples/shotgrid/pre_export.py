@@ -7,7 +7,7 @@
 
 
 
-Example Python script for pre ingest load hook (pre_export.py)
+Example Python script for pre export hook (pre_export.py)
 This scripts converts the data so you can import a CSV file into Autodesk Shotgrid
 
 
@@ -32,6 +32,7 @@ Example output from das element:
     'number': '00044',
     'colorspace': 'sRGB',
     'colorspace_source': 'sRGB',
+    'permission': '111',
     'popularity': 23,
     'tags': 'fire, flame, some other tag',
     'path': '/path/to/server/awesome_element_0044/main_1920x1080_srgb/awesome_element_0044.mov',
