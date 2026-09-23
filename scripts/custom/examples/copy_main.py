@@ -55,16 +55,6 @@ def copy_file_data(src, dst):
         pass
 
 
-def copy_file_data(src, dst):
-    # Copy file contents first; metadata changes may be rejected by
-    # ACL-managed destinations such as macOS/Linux network shares.
-    shutil.copyfile(str(src), str(dst))
-    try:
-        shutil.copystat(str(src), str(dst))
-    except (PermissionError, OSError):
-        pass
-
-
 def copy_file_sequence(source, output, frame_first, frame_last):
     # get all source file paths
     source_files = [Path(path) for path in list(findSequenceOnDisk(source))]
