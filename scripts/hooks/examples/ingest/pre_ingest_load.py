@@ -17,8 +17,8 @@ veh_awesomeCar
 
 """
 
-import sys
 import re
+import sys
 
 """
 Example to load custom external Python code
@@ -36,21 +36,22 @@ TAGS = ['assets', 'environments', 'hdri', 'photogrammetry', 'texture']
 
 
 def main(*args, logger=None):
-    '''
-        args will be a List of Dicts:
+    """
+    args will be a List of Dicts:
 
-        [{
-            'path': '/path/to/some/file.mov',
-            'path_thumbnail': '/path/to/some/thumbnail.jpg',
-            'path_proxy': '/path/to/some/proxy.mov',
-            'category': 'torch',
-            'tags': ['fire', 'flame'],
-            'colorspace': 'rec709',
-            'mapping': 'copy & rename',
-            'metadata': {'key1': 'value1', 'key2': 'value2'},
-            'additionals': [{'path': '/path/to/some/additional.exr', 'type': 'file', 'name': 'additional name', 'media_type': 'image', 'colorspace': 'linear'}]            
-        }]
-    '''
+    [{
+        'path': '/path/to/some/file.mov',
+        'path_thumbnail': '/path/to/some/thumbnail.jpg',
+        'path_proxy': '/path/to/some/proxy.mov',
+        'category': 'torch',
+        'tags': ['fire', 'flame'],
+        'colorspace': 'rec709',
+        'mapping': 'copy & rename',
+        'media_type': 'sphere',
+        'metadata': {'key1': 'value1', 'key2': 'value2'},
+        'additionals': [{'path': '/path/to/some/additional.exr', 'colorspace': 'linear', 'media_type': 'sequence-udim', 'type': 'file', 'name': 'additional name'}]
+    }]
+    """
     items = args[0]
     result = []
 
@@ -84,14 +85,15 @@ def main(*args, logger=None):
         # add custom metadata
         item['metadata'] = {'key1': 'value1', 'key2': 'value2'}
 
-        # set media type of asset
-        # item['media_type'] = 'image'
-
         # custom thumbnail
         # item['path_thumbnail'] = '/path/to/custom/thumbnail.jpg'
 
         # custom proxy file
         # item['path_proxy'] = '/path/to/custom/proxy.mov'
+
+        # overwrite media type manually
+        # this can be useful when you want to ingest an EXR as a HDRI, will otherwise be detected as 'image' or 'sequence'
+        # item['media_type'] = 'sphere'
 
         result.append(item)
     return result
